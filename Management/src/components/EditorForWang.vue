@@ -1,0 +1,117 @@
+<template>  
+    <div  style="width:100%">
+        <div id="div1">
+        </div>
+    </div>
+</template>
+
+<script>
+    import E from 'wangeditor';
+    export default {
+        name: '',
+        data() {
+            return {
+                editorShow: '',
+                action:this.$baseURL + 'upload/postfile',
+                content: '',
+            }
+        },
+        mounted(){
+            this.initWangEditor();
+        },
+        methods:{
+            initWangEditor(){
+                //获取富文本挂再节点
+                var ele = document.getElementById("div1");
+                //创建富文本
+                var editor = new E(ele);
+                editor.config.showMenuTooltips = true;
+                editor.config.menuTooltipPosition = 'down';
+                editor.config.uploadFileName = 'file' ;
+                editor.config.uploadImgMaxSize = 10 * 1024 * 1024; // 2M
+                editor.config.uploadImgServer = this.$baseURL + 'upload/postfileforimage';
+                // 配置 server 接口地址
+                editor.config.uploadVideoServer = this.$baseURL + 'upload/postfileforvideo';
+                editor.config.uploadVideoMaxSize = 1 * 1024 * 1024 * 1024; // 1024m
+                editor.config.uploadVideoName = 'file';
+                editor.config.uploadVideoAccept = ['mp4'];
+                // 本地图片上传：重写方法
+                editor.config.uploadImgHooks = {  //监听
+                    before: function (xhr, editor, files) {
+                    },
+                    success: function (xhr, editor, result) {
+                        // 图片上传并返回结果，图片插入成功之后触发
+                    },
+                    fail: function (xhr, editor, result) {
+                        this.$message({
+                            message:'上传失败',
+                            type:'error',
+                        });
+                        return false;
+                    },
+                    error: function (xhr, editor) {
+                        this.$message({
+                            message:'上传错误',
+                            type:'error',
+                        });
+                        return false;
+                    },
+                    timeout: function (xhr, editor) {
+                    },
+                    customInsert: function (insertImg, result, editor) {
+                        var url = "http://localhost:8888/" + result.data[0].url;
+                        insertImg(url);
+                    }
+                },
+                editor.config.uploadVideoHooks = {
+                    // 上传视频之前
+                    before: function(xhr) {
+                    },
+                    // 视频上传并返回了结果，视频插入已成功
+                    success: function(xhr) {
+                    },
+                    // 视频上传并返回了结果，但视频插入时出错了
+                    fail: function(xhr, editor, resData) {
+                        this.$message({
+                            message:'上传失败',
+                            type:'error',
+                        });
+                        return false;
+                    },
+                    // 上传视频出错，一般为 http 请求的错误
+                    error: function(xhr, editor, resData) {
+                        this.$message({
+                            message:'上传错误',
+                            type:'error',
+                        });
+                        return false;
+                    },
+                    // 上传视频超时
+                    timeout: function(xhr) {
+                        this.$message({
+                            message:'连接超时',
+                            type:'error',
+                        });
+                        return false;
+                    },
+                    // 视频上传并返回了结果，想要自己把视频插入到编辑器中
+                    // 例如服务器端返回的不是 { errno: 0, data: { url : '.....'} } 这种格式，可使用 customInsert
+                    customInsert: function(insertVideoFn, result) {
+                        // result 即服务端返回的接口
+                        // insertVideoFn 可把视频插入到编辑器，传入视频 src ，执行函数即可
+                        insertVideoFn("http://localhost:8888/" + result.data[0].url);
+                    },
+                },
+                editor.create();
+                this.editorShow = editor;
+            },
+            getValue(){
+                this.editorShow.txt.html()
+            },
+        },
+    }
+</script>
+
+<style scoped>
+    
+</style>
