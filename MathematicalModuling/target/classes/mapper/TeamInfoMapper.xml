@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lanqiao.dao.TeamInfoDao">
+	<!-- 添加团队 -->
+	<insert id="addTeamInfo" parameterType="teaminfo">
+		insert into teaminfo(stunum,compeid,capid,pdate,currentstatus,mrole,presult) values(#{stunum},#{compeid},#{capid},#{pdate},#{currentstatus},#{mrole},#{presult})
+	</insert>
+	<!-- 根据队长id删除团队 -->
+	<delete id="deleteTeamInfoByCaptainId" parameterType="int">
+		delete from teaminfo where capid=#{id}
+	</delete>
+	<!-- 修改参赛人的相关信息 -->
+	<update id="updateStunum" parameterType="teaminfo">
+		update teaminfo set stunum=#{stunum},compeid=#{compeid},capid=#{capid},pdate=#{pdate},currentstatus=#{currentstatus},presult=#{presult} where id=#{id}
+	</update>
+	<!-- 根据队长id查找相应的队伍 -->
+	<select id="getTeamInfoByCapid" parameterType="int" resultType="teaminfo">
+		select * from teaminfo where capid=#{id} and mrole=0
+	</select>
+	<!-- 根据赛事编号查找队伍 -->
+	<select id="getTeamInfoByCompeid" parameterType="int" resultType="teaminfo">
+		select * from teaminfo where compeid=#{id} and mrole=0
+	</select>
+	<!-- 根据报名时间查找队伍 -->
+	<select id="getTeamInfoByPdate" parameterType="date" resultType="teaminfo">
+		select * from teaminfo where pdate=#{pdate}
+	</select>
+	<!-- 根据参赛人学号查找队伍 -->
+	<select id="getTeamInfoByStunum" parameterType="string" resultType="teaminfo">
+		select * from teaminfo where stunum=#{stunum}
+	</select>
+	<!-- 根据报名时间段查找参赛队伍 -->
+	<select id="getTeamInfoByPdateWhile" parameterType="date" resultType="teaminfo">
+		select * from teaminfo where pdate between start and end
+	</select>
+	<!-- 根据赛事编号和队长id查找赛事 -->
+	<select id="getTeamInfoByMatchIdAndCapId" parameterType="int" resultType="teaminfo">
+		select * from teaminfo where compeid=#{compeid} and capid=#{capid}
+	</select>
+	<!-- 修改某个队伍的当前状态 -->
+	<update id="updateTeamCurrentStatusByMatchIdAndCapIdAndCurrentStatus" parameterType="int">
+		update teaminfo set currentstatus=#{currentstatus} where compeid=#{compeid} and capid=#{capid} 
+	</update>
+	<!-- 管理员动态查询队伍审核 -->
+	<select id="allTeamInfoByAdmin" parameterType="map" resultType="teaminfo">
+		select * from teaminfo where 1=1
+		<if test="list != null and list.size > 0">
+			and
+			<foreach collection="list" open=" currentstatus in(" close=")" item = "currentstatus" separator=",">
+				#{currentstatus}
+			</foreach>
+		</if>
+		<if test="start != null and end != null">
+			and pdate between #{start} and #{end}
+		</if>
+		<if test="other != null and other != ''">
+			and (stunum like '%${other}%' or presult like '%${other}%')
+		</if>
+		and mrole = 0
+	</select>
+	<!-- 根据赛事编号计算总的报名量 -->
+	<select id="getCountOfPerMatch" parameterType="int" resultType="int">
+		select count(*) from teaminfo where compeid=#{compeid}
+	</select>
+	<!-- // 获取参赛人的所有专业
+	List<String> getAllPro(Integer compeid); -->
+	<!-- 获取参赛人的所有专业 -->
+	<select id="getAllPro" parameterType="int" resultType="string">
+		select p.pgrade from (select stunum from teaminfo where compeid=#{compeid}) e, participants p where e.stunum = p.pstunum group by p.pgrade
+	</select>
+</mapper>

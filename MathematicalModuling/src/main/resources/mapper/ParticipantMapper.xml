@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lanqiao.dao.ParticipantDao">
+	<!-- 根据参赛人id查找参赛人 -->
+	<select id="getParticipantById" parameterType="int" resultType="participant">
+		select * from  participants where id=#{id}
+	</select>
+	<!-- 根据参赛人学号查找参赛人 -->
+	<select id="getParticipantPstunum" parameterType="string" resultType="participant">
+		select * from  participants where pstunum=#{pstunum}
+	</select>
+	<!-- 修改某个参赛人的信息 -->
+	<update id="updateInfoOfParticipant" parameterType="participant">
+		update participants set pname=#{pname},pstunum=#{pstunum},pgrade=#{pgrade},pdormitoryno=#{pdormitoryno},pcampus=#{pcampus},pnativeplace=#{pnativeplace},pidnumber=#{pidnumber},pqqno=#{pqqno},pmobilephoneno=#{pmobilephoneno},email=#{email},pattendeddesc=#{pattendeddesc},pacademy=#{pacademy} where id=#{id}
+	</update>
+	<!-- 添加参赛人 -->
+	<insert id="addNewParticipant" parameterType="participant">
+		insert into participants(pname,pstunum,pgrade,pdormitoryno,pcampus,pnativeplace,pidnumber,pqqno,pmobilephoneno,email,pattendeddesc,pacademy) values(#{pname},#{pstunum},#{pgrade},#{pdormitoryno},#{pcampus},#{pnativeplace},#{pidnumber},#{pqqno},#{pmobilephoneno},#{email},#{pattendeddesc},#{pacademy})
+	</insert>
+	<!-- 根据id删除参赛人 -->
+	<select id="deleteParticipantById" parameterType="int">
+		delete from participants where id=#{id}
+	</select>
+	<!-- 获取所有参赛人 -->
+	<select id="getAllParticipant" resultType="participant">
+		select * from participants
+	</select>
+</mapper>

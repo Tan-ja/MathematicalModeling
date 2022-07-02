@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lanqiao.dao.TeacherAndStudentDao">
+	 <!-- 获取所有老师的信息 -->
+	 <select id="getAllTeacherInfo" resultType="teacher">
+	 	select * from teacher
+	 </select>
+	 <!-- 根据指导老师的uid查找指导老师的详细信息 -->
+	 <select id="getTeacherInfoByUid" parameterType="int" resultType="teacher">
+	 	select * from teacher where uid=#{uid}
+	 </select>
+	 <!-- 获取所有学生的概略信息 -->
+	 <select id="getAllStudentInfo" resultType="student">
+	 	select * from student
+	 </select>
+	 <!-- 根据学生的sid查找某个学生的详细信息 -->
+	 <select id="getStudentInfoBySid" parameterType="int" resultType="student">
+	 	select * from student where sid=#{sid}
+	 </select>
+	 <!--  获取名人堂页面学生内容 -->
+	 <select id="getFamousStudent" resultType="FamousStudent">
+	 	select * from famousm
+	 </select>
+	 <!-- 获取学术咨询所有内容 -->
+	 <select id="getAllAcademicDynamic" resultType="academicdynamic">
+	 	select * from academicdynamic
+	 </select>
+	 <!-- 给指导老师注入详细信息 -->
+	 <update id="insertTeacherInfo" parameterType="string">
+	 	update teacher set udesc=#{udesc} where uname=#{uname}
+	 </update>
+	 <!-- 获取指定数量的学生的信息 -->
+	 <select id="getAllStudentInfoWithLimit" parameterType="string" resultType="student">
+	 	select * from student limit ${pageSize * (currentPage - 1)},${pageSize}
+	 </select>
+	 <!-- 获取指定数量的学生的信息 -->
+	 <select id="getAllTeacherInfoWithLimit" parameterType="string" resultType="teacher">
+	 	select * from teacher limit ${pageSize * (currentPage - 1)},${pageSize}
+	 </select>
+	<!-- 获取指定数量的学生的信息 -->
+	<select id="getAllStudentInfoWithLimitMore" parameterType="string" resultType="student">
+		select * from student where 1=1 
+		<if test="key != null and key != ''">
+			and (sname like '%${key}%' or sgrade like '%${key}%')
+		</if>
+		 limit ${pageSize * (currentPage - 1)},${pageSize}
+	</select>
+	<!-- 获取指定数量的教师的信息 -->
+	<select id="getAllTeacherInfoWithLimitMore" parameterType="string" resultType="teacher">
+		select * from teacher where 1=1 
+		<if test="key != null and key != ''">
+			and uname like '%${key}%' 
+		</if>
+		 limit ${pageSize * (currentPage - 1)},${pageSize}
+	</select>
+	<!-- 获取指定数量的学生的信息 -->
+	<!-- 修改教师的信息 -->
+	<update id="updateTeaInfo" parameterType="teacher">
+		update teacher set uname=#{uname},usex=#{usex},uprofession=#{uprofession},unativeplace=#{unativeplace},uintroduction=#{uintroduction},uaddress=#{uaddress},uphonenum=#{uphonenum},uemail=#{uemail},ufaceaddress=#{ufaceaddress},udesc=#{udesc},udate=#{udate},ufrom=#{ufrom} where uid=#{uid}  
+	</update>
+	<!-- 添加教师信息 -->
+	<insert id="addTeacherInfo" parameterType="teacher">
+		insert into teacher(uname,usex,uprofession,unativeplace,uintroduction,uaddress,uphonenum,uemail,ufaceaddress,udesc,udate,ufrom,ucomment,ureaders,uthumbup) values(#{uname},#{usex},#{uprofession},#{unativeplace},#{uintroduction},#{uaddress},#{uphonenum},#{uemail},#{ufaceaddress},#{udesc},#{udate},#{ufrom},#{ucomment},#{ureaders},#{uthumbup})
+	</insert>
+	<!-- 修改学生的信息 -->
+	<update id="updateStuInfo" parameterType="student">
+		update student set sname=#{sname},sex=#{sex},snativeplace=#{snativeplace},sbirthday=#{sbirthday},spoland=#{spoland},sgrade=#{sgrade},smotto=#{smotto},sfaceaddress=#{sfaceaddress},sachieve=#{sachieve},sposition=#{sposition},sdate=#{sdate},sfrom=#{sfrom} where sid=#{sid}
+	</update>
+	<!-- 添加学生信息 -->
+	<insert id="addStudentInfo" parameterType="student">
+		insert into student(sname,sex,snativeplace,sbirthday,spoland,sgrade,smotto,sfaceaddress,sachieve,sposition,sdate,sfrom,scomment,sreaders,sthumbup) values(#{sname},#{sex},#{snativeplace},#{sbirthday},#{spoland},#{sgrade},#{smotto},#{sfaceaddress},#{sachieve},#{sposition},#{sdate},#{sfrom},#{scomment},#{sreaders},#{sthumbup})
+	</insert>
+	<!-- 根据uid删除教师信息 -->
+	<delete id="deleteTeaInfo" parameterType="int">
+		delete from teacher where uid=#{uid}
+	</delete>
+	<!-- 根据sid删除学生信息 -->
+	<delete id="deleteStuInfo" parameterType="int">
+		delete from student where sid=#{sid}
+	</delete>
+	<!-- 修改教师的评论数 -->
+	<update id="updateTeacherCommentNum" parameterType="int">
+		update teacher set ucomment=ucomment+1 where uid=#{uid}
+	</update>
+	<!-- 修改学生的评论数 -->
+	<update id="updateStudentCommentNum" parameterType="int">
+		update student set scomment=scomment+1 where sid=#{sid}
+	</update>
+	<!-- 修改教师详细情况访问人数 -->
+	<update id="updateTeacherReaderNum" parameterType="int">
+		update teacher set ureaders=ureaders+1 where uid=#{uid}
+	</update>
+	<!-- 修改教师详细情况访问人数 -->
+	<update id="updateStudentReaderNum" parameterType="int">
+		update student set sreaders=sreaders+1 where sid=#{sid}
+	</update>
+	<!-- 添加教师的点赞人数 -->
+	<update id="updateTeacherUthumbupAdd" parameterType="int">
+		update teacher set uthumbup=uthumbup+1 where uid=#{uid}
+	</update>
+	<!-- 减少教师的点赞人数 -->
+	<update id="updateTeacherUthumbupRe" parameterType="int">
+		update teacher set uthumbup=uthumbup-1 where uid=#{uid}
+	</update>
+	<!-- 添加学生的点赞人数 -->
+	<update id="updateStudentUthumbupAdd" parameterType="int">
+		update student set sthumbup=sthumbup+1 where sid=#{sid}
+	</update>
+	<!-- 减少学生的点赞人数 -->
+	<update id="updateStudentUthumbupRe" parameterType="int">
+		update student set sthumbup=sthumbup-1 where sid=#{sid}
+	</update>
+	<!-- 获取所有老师的信息 -->
+	<select id="getAllTeacherInfoLimit" parameterType="string" resultType="teacher">
+		select * from teacher where 1=1
+		<if test="key != ''">
+			and uname like '%${key}%'
+		</if>
+	</select>
+	<!-- 获取所有学生的信息 -->
+	<select id="getAllStudentInfoLimit" parameterType="string" resultType="student">
+		select * from student where 1=1
+		<if test="key != ''">
+			and (sname like '%${key}%' or sgrade like '%${key}%')
+		</if>
+	</select>
+</mapper>

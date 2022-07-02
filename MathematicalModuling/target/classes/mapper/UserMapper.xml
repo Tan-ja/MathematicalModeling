@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lanqiao.dao.UserDao">
+	<!-- 老师或者学生登录 -->
+	 <select id="login" parameterType="string" resultType="user">
+	 	select * from user where uloginid = #{uloginid} and upassword=#{upassword}
+	 </select>
+	<!-- 根据用户id查找某个用户的信息 -->
+	<select id="getUserByUserId" parameterType="int" resultType="user">
+		select * from user where userid=#{userid}
+	</select>
+	<!-- 添加用户信息 -->
+	<insert id="addUser" parameterType="user">
+		insert into user(uemail,usernickname,usersex,createtime,userfaceaddress,userlevel,userfrom,usersignature,uloginid,upassword,uonline,urole,ustunum,ucent) values(#{uemail},#{usernickname},#{usersex},#{createtime},#{userfaceaddress},#{userlevel},#{userfrom},#{usersignature},#{uloginid},#{upassword},'离线',#{urole},#{ustunum},#{ucent})
+	</insert>
+	<!-- 根据用户姓名查找用户信息 -->
+	<select id="getUserByName" parameterType="string" resultType="user">
+		select * from user where uloginid=#{uloginid}
+	</select>
+	<!-- 用户修改个人信息 -->
+	<update id="updateUserInfo" parameterType="user">
+		update user set uemail=#{uemail},usernickname=#{usernickname},usersex=#{usersex},userfaceaddress=#{userfaceaddress},userfrom=#{userfrom},usersignature=#{usersignature},upassword=#{upassword},ustunum=#{ustunum} where userid=#{userid}
+	</update>
+	<!-- 修改用户是否在线 -->
+	<update id="updateUserIsOnline" parameterType="map">
+		update user set uonline=#{uonline} where userid=#{userid}
+	</update>
+	<!-- 根据用户学号查找用户 -->
+	<select id="getUserByUstunum" parameterType="string" resultType="user">
+		select * from user where ustunum=#{ustunum}
+	</select>
+	<!-- 分页查询用户 -->
+	<select id="getAllUserByPage" parameterType="string" resultType="user">
+		select * from user where 1=1 
+		<if test="key != ''">
+			and (uemail like '%${key}%' or usernickname like '%${key}%' or userfrom like '%${key}%' or usersignature like '%${key}%'  or ustunum like '%${key}%')
+		</if>
+		limit ${pageSize * (currentPage - 1)},${pageSize}
+	</select>
+	<!-- 分页查询用户 -->
+	<select id="getAllUserByPageLimit" parameterType="string" resultType="user">
+		select * from user where 1=1 
+		<if test="key != ''">
+			and (uemail like '%${key}%' or usernickname like '%${key}%' or userfrom like '%${key}%' or usersignature like '%${key}%'  or ustunum like '%${key}%')
+		</if>
+	</select>
+</mapper>

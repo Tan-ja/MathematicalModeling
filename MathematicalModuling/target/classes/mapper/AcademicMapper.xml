@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lanqiao.dao.AcademicDao">
+	 <!-- 获取学术咨询所有内容 -->
+	 <select id="getAllAcademicDynamic" parameterType="string" resultType="academicdynamic">
+	 	select adid,acategory,adate,aconsider,acomment,areaders,atitle,afaceaddress from academicdynamic where acategory=#{acategory} limit ${pageSize * (currentPage - 1)},${pageSize}
+	 </select>
+	 <!-- 根据学术咨询文章的id查找某个咨询信息 -->
+	 <select id="getAcademicDynamicById" parameterType="int" resultType="academicdynamic">
+	 	select * from academicdynamic where adid=#{adid}
+	 </select>
+	 <!-- 根据种类名称获取学术动态中的相关内容(没有限制) -->
+	 <select id="getAllAcademicDynamicNoLimit" parameterType="string" resultType="academicdynamic">
+	 	select * from academicdynamic where acategory=#{acategory}
+	 </select>
+	 <!-- 每次用户进入相应页面，页面的访问次数添加一次 -->
+	 <update id="updateUserNum" parameterType="int">
+	 	update academicdynamic set areaders = (areaders + 1) where adid=#{adid}
+	 </update>
+	 <!-- 每次用户对当前对象进行评论时，还要修改当前对象的评论数 -->
+	 <update id="updateAcomment" parameterType="int">
+	 	update academicdynamic set acomment = (acomment + 1) where adid=#{adid}
+	 </update>
+	<!-- 每次用户对当前对象进行点赞时，还要修改当前对象的点赞数 -->
+	<update id="updateAconsiderAdd" parameterType="int">
+		update academicdynamic set aconsider=(aconsider + 1) where adid=#{adid}
+	</update>
+	<!-- 每次用户对当前对象进行点赞时，还要修改当前对象的点赞数 -->
+	<update id="updateAconsiderRe" parameterType="int">
+		update academicdynamic set aconsider=(aconsider - 1) where adid=#{adid}
+	</update>
+	 <!-- 管理员进行模糊查询 -->
+	<!-- List<AcademicDynamic> getAllAcademicDynamicByFuzzyQuery(String acategory, int currentPage, int pageSize, String key); -->
+	<select id="getAllAcademicDynamicByFuzzyQuery" parameterType="string" resultType="academicdynamic">
+		select * from academicdynamic where acategory=#{acategory} and atitle like '%${key}%' limit ${pageSize * (currentPage - 1)},${pageSize}
+	</select>
+	<!-- 管理员进行模糊查询 -->
+	<select id="getAcademicDynamicByFuzzyQuery" parameterType="string" resultType="academicdynamic">
+		select * from academicdynamic where acategory=#{acategory} and atitle like '%${key}%'
+	</select>
+	<!-- 根据adid删除协会的某个信息 -->
+	<delete id="deleteAcademicDynamicByAdid" parameterType="int">
+		delete from academicdynamic where adid=#{adid}
+	</delete>
+	<!-- 修改协会的某个信息 -->
+	<update id="updateAcademicDynamicInfo" parameterType="academicdynamic">
+		update academicdynamic set acategory=#{acategory},adate=#{adate},aconsider=#{aconsider},acomment=#{acomment},areaders=#{areaders},atitle=#{atitle},afrom=#{afrom},acontent=#{acontent},afaceaddress=#{afaceaddress},acontentdesc=#{acontentdesc} where adid=#{adid}
+	</update>
+	<!-- 添加协会的信息 -->
+	<insert id="addAcademicDynamic" parameterType="academicdynamic">
+		insert into academicdynamic(acategory,adate,aconsider,acomment,areaders,atitle,afrom,acontent,afaceaddress,acontentdesc) values(#{acategory},#{adate},#{aconsider},#{acomment},#{areaders},#{atitle},#{afrom},#{acontent},#{afaceaddress},#{acontentdesc})
+	</insert>
+	<!-- 用户进行模糊查询 -->
+	<select id="getAllAcademicDynamicByFuzzyQueryForUserByPage" parameterType="string" resultType="academicdynamic">
+		select * from academicdynamic where atitle like '%${key}%' limit ${pageSize * (currentPage - 1)},${pageSize}
+	</select>
+	<!-- 用户进行模糊查询 -->
+	<select id="getAllAcademicDynamicByFuzzyQueryForUser" parameterType="string" resultType="academicdynamic">
+		select * from academicdynamic where atitle like '%${key}%'
+	</select>
+</mapper>
